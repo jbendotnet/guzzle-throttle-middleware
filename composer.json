@@ -1,5 +1,5 @@
 {
-  "name": "jbendotnet/guzzle-throttle-middleware",
+  "name": "bentools/guzzle-throttle-middleware",
   "description": "A GuzzleHTTP Middleware that can delay requests before sending them.",
   "type": "library",
   "license": "MIT",
