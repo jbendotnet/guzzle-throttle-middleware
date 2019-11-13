@@ -13,7 +13,7 @@ class ArrayAdapter implements ThrottleStorageInterface
     /**
      * @inheritDoc
      */
-    public function hasCounter(string $storageKey): bool
+    public function hasCounter($storageKey)
     {
         return isset($this->storage[$storageKey]);
     }
@@ -21,15 +21,15 @@ class ArrayAdapter implements ThrottleStorageInterface
     /**
      * @inheritDoc
      */
-    public function getCounter(string $storageKey): Counter
+    public function getCounter($storageKey)
     {
-        return $this->storage[$storageKey] ?? null;
+        return isset($this->storage[$storageKey]) ? $this->storage[$storageKey] : null;
     }
 
     /**
      * @inheritDoc
      */
-    public function saveCounter(string $storageKey, Counter $counter, float $ttl = null)
+    public function saveCounter($storageKey, Counter $counter, $ttl = null)
     {
         $this->storage[$storageKey] = $counter;
     }
@@ -37,7 +37,7 @@ class ArrayAdapter implements ThrottleStorageInterface
     /**
      * @inheritDoc
      */
-    public function deleteCounter(string $storageKey)
+    public function deleteCounter($storageKey)
     {
         unset($this->storage[$storageKey]);
     }

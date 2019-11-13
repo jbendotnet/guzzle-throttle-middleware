@@ -28,7 +28,7 @@ class Counter implements \Serializable, \JsonSerializable, \Countable
      * Counter constructor.
      * @param float $expiresIn
      */
-    public function __construct(float $expiresIn)
+    public function __construct($expiresIn)
     {
         $this->useMicroseconds = intval($expiresIn) != $expiresIn;
         $this->expiresIn = $this->useMicroseconds ? $expiresIn : intval($expiresIn);
@@ -60,7 +60,7 @@ class Counter implements \Serializable, \JsonSerializable, \Countable
     /**
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         if ($this->isExpired()) {
             $this->reset();
@@ -69,15 +69,11 @@ class Counter implements \Serializable, \JsonSerializable, \Countable
     }
 
     /**
-     * @return int|float
+     * @return float
      */
     public function getRemainingTime()
     {
-        $remainingTime = (float) max(0, $this->expiresAt - $this->now());
-        if (false === $this->useMicroseconds) {
-            $remainingTime = ceil($remainingTime);
-        }
-        return $remainingTime;
+        return (float) max(0, $this->expiresAt - $this->now());
     }
 
     /**

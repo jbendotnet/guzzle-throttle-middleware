@@ -1,5 +1,5 @@
 {
-  "name": "bentools/guzzle-throttle-middleware",
+  "name": "jbendotnet/guzzle-throttle-middleware",
   "description": "A GuzzleHTTP Middleware that can delay requests before sending them.",
   "type": "library",
   "license": "MIT",
@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=5.6",
     "guzzlehttp/guzzle": "^6.0",
     "bentools/psr7-request-matcher": "^1.0",
     "psr/log": "^1.0"

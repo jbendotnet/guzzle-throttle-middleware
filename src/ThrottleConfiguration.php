@@ -34,7 +34,7 @@ class ThrottleConfiguration implements RequestMatcherInterface
      * @param float                     $duration
      * @param string                  $storageKey
      */
-    public function __construct(RequestMatcherInterface $requestMatcher, int $maxRequests, float $duration, string $storageKey)
+    public function __construct(RequestMatcherInterface $requestMatcher, $maxRequests, $duration, $storageKey)
     {
         $this->requestMatcher = $requestMatcher;
         $this->maxRequests = $maxRequests;
@@ -53,7 +53,7 @@ class ThrottleConfiguration implements RequestMatcherInterface
     /**
      * @return int
      */
-    public function getMaxRequests(): int
+    public function getMaxRequests()
     {
         return $this->maxRequests;
     }
@@ -61,7 +61,7 @@ class ThrottleConfiguration implements RequestMatcherInterface
     /**
      * @return float
      */
-    public function getDuration(): float
+    public function getDuration()
     {
         return $this->duration;
     }
@@ -69,7 +69,7 @@ class ThrottleConfiguration implements RequestMatcherInterface
     /**
      * @return string
      */
-    public function getStorageKey(): string
+    public function getStorageKey()
     {
         return $this->storageKey;
     }

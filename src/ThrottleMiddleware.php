@@ -6,9 +6,6 @@ use BenTools\GuzzleHttp\Middleware\Storage\Adapter\ArrayAdapter;
 use BenTools\GuzzleHttp\Middleware\Storage\Counter;
 use BenTools\GuzzleHttp\Middleware\Storage\ThrottleStorageInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
-use Psr\Log\NullLogger;
 
 class ThrottleMiddleware
 {
@@ -16,33 +13,18 @@ class ThrottleMiddleware
      * @var ThrottleConfiguration[]
      */
     private $configurations = [];
-
     /**
      * @var ThrottleStorageInterface
      */
     private $storage;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var string
-     */
-    private $logLevel;
-
-    /**
      * ThrottleMiddleware constructor.
      * @param ThrottleStorageInterface $storage
-     * @param LoggerInterface|null     $logger
-     * @param string                   $logLevel
      */
-    public function __construct(ThrottleStorageInterface $storage = null, LoggerInterface $logger = null, string $logLevel = LogLevel::INFO)
+    public function __construct(ThrottleStorageInterface $storage = null)
     {
-        $this->storage = $storage ?? new ArrayAdapter();
-        $this->logger = $logger ?? new NullLogger();
-        $this->logLevel = $logLevel;
+        $this->storage = $storage != null ? $storage : new ArrayAdapter();
     }
 
     /**
@@ -71,22 +53,19 @@ class ThrottleMiddleware
     {
         try {
             $counter = $this->storage->getCounter($configuration->getStorageKey());
+            var_export($counter);
         } catch (\TypeError $e) {
+            $counter = new Counter($configuration->getDuration());
+        }
+
+        if (empty($counter)) {
             $counter = new Counter($configuration->getDuration());
         }
 
         if (!$counter->isExpired()) {
             if ($counter->count() >= $configuration->getMaxRequests()) {
-                $this->logger->log(
-                    $this->logLevel,
-                    sprintf(
-                        '%d out of %d requests reach. Sleeping %s seconds before trying again...',
-                        $counter->count(),
-                        $configuration->getMaxRequests(),
-                        $counter->getRemainingTime()
-                    )
-                );
-                $this->sleep($counter->getRemainingTime());
+                $microDuration = $configuration->getDuration() * 1000000;
+                usleep(random_int(min(50000, $microDuration), ($microDuration))); // Add some randomness to help shared storage
                 $this->processConfiguration($configuration);
                 return;
             }
@@ -96,20 +75,5 @@ class ThrottleMiddleware
 
         $counter->increment();
         $this->storage->saveCounter($configuration->getStorageKey(), $counter, $configuration->getDuration());
-    }
-
-    /**
-     * @param float $value
-     */
-    private function sleep(float $value)
-    {
-        $values = explode('.', (string) $value);
-        $seconds = array_shift($values);
-        $milliseconds = array_shift($values);
-        \sleep($seconds);
-        if (null !== $milliseconds) {
-            $milliseconds = ((float) sprintf('0.%s', $milliseconds)) * 1000;
-            usleep($milliseconds * 1000);
-        }
     }
 }
