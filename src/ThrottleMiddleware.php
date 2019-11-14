@@ -53,7 +53,6 @@ class ThrottleMiddleware
     {
         try {
             $counter = $this->storage->getCounter($configuration->getStorageKey());
-            var_export($counter);
         } catch (\TypeError $e) {
             $counter = new Counter($configuration->getDuration());
         }
